@@ -1,7 +1,5 @@
 package bloc
 
-import "log"
-
 // SingleListenerDriver is a bloc driver that supports a single subscriber.
 // Calls to subscriber will return the same subscription.
 type SingleListenerDriver struct {
@@ -27,15 +25,16 @@ func (sb *SingleListenerDriver) launch() {
 
 	// Data provider
 	go func() {
-		if launchBloc, isLaunchBloc := sb.bloc.(BlocSelfLaunch); isLaunchBloc {
-			launchBloc.OnLaunch(sb.stateChan)
-		}
-
-		for event := range sb.eventChan {
-			log.Println("Reading event: ", event)
-			sb.bloc.OnEvent(event, sb.stateChan)
-		}
-		close(sb.stateChan)
+		sb.bloc.Handle(sb.stateChan, sb.eventChan)
+		//if launchBloc, isLaunchBloc := sb.bloc.(BlocSelfLaunch); isLaunchBloc {
+		//	launchBloc.OnLaunch(sb.stateChan)
+		//}
+		//
+		//for event := range sb.eventChan {
+		//	log.Println("Reading event: ", event)
+		//	sb.bloc.OnEvent(event, sb.stateChan)
+		//}
+		//close(sb.stateChan)
 	}()
 }
 
@@ -62,5 +61,6 @@ func (s singleListenerDriverSubscription) Chan() chan State {
 }
 
 func (s singleListenerDriverSubscription) Close() {
+	s.driver.Close()
 }
 

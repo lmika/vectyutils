@@ -20,43 +20,42 @@ type BlocBuilder struct {
 	OnUnsubscribe func()                                       `vecty:"prop"`
 
 	//transitionIndex int
-	state     bloc.State
-	stateChan bloc.Subscription
-	comp      vecty.ComponentOrHTML
+	State     bloc.State			`vecty:"prop"`
+	StateChan bloc.Subscription		`vecty:"prop"`
 }
 
 func (p *BlocBuilder) Render() vecty.ComponentOrHTML {
-	if p.state == nil {
+	if p.State == nil {
 		p.blocState()
 	}
 
-	return p.Builder(p.state)
+	return p.Builder(p.State)
 }
 
 func (b *BlocBuilder) blocState() bloc.State {
-	if b.stateChan == nil {
-		b.stateChan = b.Bloc.Subscribe()
-		b.state = <-b.stateChan.Chan()
+	if b.StateChan == nil {
+		b.StateChan = b.Bloc.Subscribe()
+		b.State = <-b.StateChan.Chan()
 
 		go func() {
 			//runtime.LockOSThread()
-			for state := range b.stateChan.Chan() {
-				b.state = state
+			for state := range b.StateChan.Chan() {
+				b.State = state
 				vecty.Rerender(b)
 			}
 		}()
 
 		if b.OnSubscribe != nil {
-			b.OnSubscribe(b.state)
+			b.OnSubscribe(b.State)
 		}
 	}
 
-	return b.state
+	return b.State
 }
 
 func (b *BlocBuilder) Unmount() {
-	b.stateChan.Close()
-	b.stateChan = nil
+	b.StateChan.Close()
+	b.StateChan = nil
 
 	if b.OnUnsubscribe != nil {
 		b.OnUnsubscribe()

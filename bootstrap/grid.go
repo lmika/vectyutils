@@ -15,7 +15,11 @@ func Col(elems ...vecty.ComponentOrHTML) *vecty.HTML {
 
 func ColEx(colOptions ColOptions, elems ...vecty.ComponentOrHTML) *vecty.HTML {
 	if colOptions.Width > 0 {
-		return divWithClass("col-" + strconv.Itoa(colOptions.Width), elems)
+		if len(colOptions.Classes) == 0 {
+			return divWithClass("col-"+strconv.Itoa(colOptions.Width), elems)
+		} else {
+			return divWithClasses(append([]string{"col-" + strconv.Itoa(colOptions.Width)}, colOptions.Classes...), elems)
+		}
 	}
 
 	return Col(elems...)
@@ -23,4 +27,5 @@ func ColEx(colOptions ColOptions, elems ...vecty.ComponentOrHTML) *vecty.HTML {
 
 type ColOptions struct {
 	Width	int
+	Classes []string
 }

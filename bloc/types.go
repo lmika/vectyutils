@@ -11,12 +11,7 @@ type Driver interface {
 
 type Bloc interface {
 	InitState() State
-	OnEvent(event Event, transition chan State)
-}
-
-type BlocSelfLaunch interface {
-	Bloc
-	OnLaunch(transition chan State)
+	Handle(transition chan<- State, event <-chan Event)
 }
 
 type Subscription interface {

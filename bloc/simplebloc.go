@@ -1,18 +1,18 @@
 package bloc
 
-func SimpleBloc(initState State, eventHandler func(event Event, stateChan chan State)) Bloc {
-	return simpleBloc{initState, eventHandler}
+func BlocFn(initState State, handler func(transition chan<- State, event <-chan Event)) Bloc {
+	return simpleBloc{initState, handler}
 }
 
 type simpleBloc struct {
 	initState State
-	eventHandler func(event Event, stateChan chan State)
+	handler func(transition chan<- State, event <-chan Event)
 }
 
 func (sb simpleBloc) InitState() State {
 	return sb.initState
 }
 
-func (sb simpleBloc) OnEvent(event Event, transition chan State) {
-	sb.eventHandler(event, transition)
+func (sb simpleBloc) Handle(transition chan<- State, event <-chan Event) {
+	sb.handler(transition, event)
 }

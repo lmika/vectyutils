@@ -1,7 +1,5 @@
 package bloc
 
-import "log"
-
 type SimpleDriver struct {
 	bloc          Bloc
 	currState     State
@@ -26,14 +24,15 @@ func (sb *SimpleDriver) launch() {
 
 	// Data provider
 	go func() {
-		if launchBloc, isLaunchBloc := sb.bloc.(BlocSelfLaunch); isLaunchBloc {
-			launchBloc.OnLaunch(sb.stateListener)
-		}
-
-		for event := range sb.eventChan {
-			log.Println("Reading event: ", event)
-			sb.bloc.OnEvent(event, sb.stateListener)
-		}
+		sb.bloc.Handle(sb.stateListener, sb.eventChan)
+		//if launchBloc, isLaunchBloc := sb.bloc.(BlocSelfLaunch); isLaunchBloc {
+		//	launchBloc.OnLaunch(sb.stateListener)
+		//}
+		//
+		//for event := range sb.eventChan {
+		//	log.Println("Reading event: ", event)
+		//	sb.bloc.OnEvent(event, sb.stateListener)
+		//}
 	}()
 
 	// Fanout
