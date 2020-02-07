@@ -22,7 +22,7 @@ func New(configs ...Config) *Router {
 	}
 
 	r.routeMatcher.init()
-	r.driver = bloc.NewSingleListenerDriver(&routerBloc{driver: &hashDriver{}})
+	r.driver = bloc.NewSingleListenerDriver(&routerBloc{driver: defaultDriver})
 	return r
 }
 

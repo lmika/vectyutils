@@ -25,3 +25,7 @@ func (hd *hashDriver) subscribeToChanges(callback func()) (close func()) {
 		f.Release()
 	}
 }
+
+func (hd *hashDriver) gotoPath(path string) {
+	js.Global().Get("location").Set("hash", path)
+}
